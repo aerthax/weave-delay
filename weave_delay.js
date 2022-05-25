@@ -206,7 +206,7 @@ function selectReport() {
     let el_playerSelect = document.querySelector("#pname");
     let el_fightSelect = document.querySelector("#fightSelect");
 
-    let playerParam = el_playerSelect === null ? "" : "&player=" + el_playerSelect.value;
+    let playerParam = el_playerSelect === null ? "" : "&player=" + el_playerSelect.value.charAt(0).toUpperCase() + el_playerSelect.value.slice(1);;
     //TODO: making URL instant load copied fight
     //let fightParam = el_fightSelect === null ? "" : "&fight=" + el_fightSelect.value;
 
