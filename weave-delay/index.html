@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="weave_delay.js"></script>
+    <script src="front.js"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <style>
+        body {
+            margin: 0;
+            min-height: 900px;
+        }
+
+        #plot * {
+            background-color: #fff;
+        }
+
+        body,
+        #input {
+            background-color: #222;
+            color: #fff
+        }
+
+        #input :disabled {
+            color: #555
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            height: 20px;
+            border: 1px solid white;
+            padding: 3px;
+        }
+
+        #input input,
+        #input select {
+            min-width: 350px;
+            width: 100%;
+            box-sizing: border-box
+        }
+
+        #input button {
+            width: 450px;
+            top: -10px;
+        }
+
+        a:link {
+            color: rgb(201, 175, 175);
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:visited {
+            color: rgb(201, 175, 175);
+            background-color: transparent;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: rgb(201, 175, 175);
+            background-color: transparent;
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: yellow;
+            background-color: transparent;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body onload="loadPage()">
+    <div id="input" style="position: relative; right: -15px; top: 15px;">
+        <table>
+            <tr>
+                <td>Report ID</td>
+                <td><input type="text" id="code"></td>
+            </tr>
+            <tr>
+                <td>Player Name</td>
+                <td><input type="text" id="pname"></input></td>
+            </tr>
+            <tr>
+                <td>Fight</td>
+                <td><select id="fightSelect" onchange="selectFight()"></select></td>
+            </tr>
+        </table>
+        <button onclick="selectReport()">Submit</button>
+    </div>
+    <br>
+    <div id="plot" style="display: none; position: relative; right: -15px; top: 15px;">
+        <svg id="svg1" width="600" height="400"></svg>
+        <svg id="svg2" width="600" height="400"></svg>
+        <svg id="svg3" width="600" height="400"></svg>
+    </div>
+
+    <div id="info" style="position: relative; right: -15px; top: 15px;"">
+        <button onclick=" showAndHideDisclaimer()">About</button>
+        <button onclick="showAndHideChangelog()">Changelog</button>
+        <button onclick="showAndHideTutorial()">Tutorial</button>
+        <div id="disclaimer" style="display:block">
+            <p>This tool is able to calculate the delay between your weaves and your normal shots and abilities.</p>
+            <p>The delay is calculated from the combat logs. Some inaccuracies can occur.</p>
+            <p>For each boss there will be three graphs:</p>
+            <ul>
+                <li>ability to weave: shows the time between your last ability and your weave</li>
+                <li>weave to ability: shows the time between your weave and your next ability</li>
+                <li>total weave time: shows the total time between your last and your next abilty when you weaved</li>
+            </ul>
+            <p>For any feedback or inconsistencies you notice (I am very new to JavaScript or HTML), do not hesitate to
+                send me a message on Discord (#henry3281). I am happy about any feedback. Just join the hunter <a
+                    href="https://discord.gg/classichunter">discord</a>, so I do not get flooded with friend requests.
+            </p>
+        </div>
+        <div id="changelog" style="display:none">
+            <h1>Any changes will go here in the future!</h1>
+        </div>
+        <div id="tutorial" style="display:none">
+            <p>How to get your weave graphs</p>
+            <ol>
+                <li>Go to warcraft logs and copy your report. Can use directly the entire url (ex:
+                    https://classic.warcraftlogs.com/reports/TvCLWArKDBYbw6Hk#fight=last) or only the id (ex:
+                    TvCLWArKDBYbw6Hk)
+                </li>
+                <li>Past your ID/report url in 'Report ID'</li>
+                <li>Enter the player Name'</li>
+                <li>Select the fight you wanna see</li>
+                <li>Enjoy the graphs</li>
+            </ol>
+            If something seem incorrect
+            <ol>
+                <li>Try to force refresh the website (ctrl+f5 on chrome)</li>
+                <li>Please send me a DM on discord #henry3281. Just join the hunter<a
+                        href="https://discord.gg/classichunter">
+                        discord</a>, so I do not get flooded with friend requests. </li>
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>
