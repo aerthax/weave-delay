@@ -57,6 +57,7 @@ class Report {
     }
 
     async fetchData() {
+
         if ("data" in this) {
             return;
         }
@@ -72,6 +73,7 @@ class Report {
         if ("casts" in this) {
             return;
         }
+        enableInput(false);
         this.casts = {};
         let source = this.friendlies[this.playerName];
         if (source == undefined) {
@@ -232,7 +234,7 @@ function selectReport() {
     el.style.borderColor = null;
     console.log("checking after");
     if (!(reportId in reports)) reports[reportId] = new Report(reportId, getParameterByName('player'));
-    enableInput(false);
+
     reports[reportId].fetchData().then(() => {
         for (let fight of reports[reportId].data.fights) {
             if (fight.boss != 0) {
