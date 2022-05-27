@@ -57,12 +57,14 @@ class Report {
     }
 
     async fetchData() {
-
+        console.log("inside fetchData...");
         if ("data" in this) {
+            ("data exists, returning...");
             return;
         }
         this.friendlies = {};
         this.data = await fetchWCLv1(`report/fights/${this.reportId}?`);
+        console.log("done getting data");
         for (let friendlies of this.data.friendlies) {
             this.friendlies[friendlies.name] = friendlies.id;
         }
@@ -70,7 +72,9 @@ class Report {
     }
 
     async fetchCasts() {
+        console.log("inside fetchCasts...");
         if ("casts" in this) {
+            console.log("casts exists, returning...");
             return;
         }
         enableInput(false);
@@ -82,11 +86,13 @@ class Report {
             location.href = location.origin + location.pathname + `?id=${getParameterByName("id")}`;
             return;
         }
+
         for (let fight of this.data.fights) {
             if (fight.boss != 0) {
                 this.casts[fight.id] = await fetchWCLv1(`report/events/casts/${this.reportId}?start=${fight.start_time}&end=${fight.end_time}&sourceid=${source}&options=66&`);
             }
         }
+        console.log("done in casts");
         enableInput(true);
         selectFight();
     }
@@ -144,6 +150,10 @@ class Report {
 //draws the graphs
 function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
 
+    //calculate average
+
+    let average = (y_data.reduce((a, b) => a + b, 0) / y_data.length) || 0;
+
     var svg = d3.select(svg_id),
         margin = 100,
         width = svg.attr("width") - margin - 20, //400
@@ -177,6 +187,14 @@ function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
         .style('font-size', 12)
         .text('Time in milliseconds');
 
+    //average label 
+    svg.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('transform', 'translate(' + (svg.attr("width") - 55) + ', ' + (svg.attr("height") - 6) + ')')
+        .style('font-family', 'Helvetica')
+        .style('font-size', 12)
+        .text("avg. time = " + average);
+
     var g = svg.append("g")
         .attr("transform", "translate(" + 70 + "," + 50 + ")");
 
@@ -204,6 +222,7 @@ function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
 function selectReport() {
 
     let wcl = getParameterByName('id');
+    let player = getParameterByName('player');
     let el = document.querySelector("#code");
     let el_playerSelect = document.querySelector("#pname");
     let el_fightSelect = document.querySelector("#fightSelect");
@@ -215,7 +234,7 @@ function selectReport() {
     el_fightSelect.innerHTML = "";
     let reportId = el.value;
 
-    if (!wcl || wcl !== reportId) {
+    if (!wcl || wcl !== reportId || !player || player !== el_playerSelect.value) {
         //TODO: look above
         //location.href = location.origin + location.pathname + '?id=' + el.value + playerParam + fightParam;
         location.href = location.origin + location.pathname + '?id=' + el.value + playerParam;
@@ -234,8 +253,8 @@ function selectReport() {
     el.style.borderColor = null;
     console.log("checking after");
     if (!(reportId in reports)) reports[reportId] = new Report(reportId, getParameterByName('player'));
-
     reports[reportId].fetchData().then(() => {
+        console.log("Starting to add the fights....");
         for (let fight of reports[reportId].data.fights) {
             if (fight.boss != 0) {
                 let el_f = document.createElement("option");
