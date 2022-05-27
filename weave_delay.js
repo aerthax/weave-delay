@@ -99,11 +99,12 @@ class Report {
 
     doMath(fightId, start_time, name) {
         //this removes any ability in blacklist from the cast list, also removes any windfury proccs
-        let blacklist = ["Dark Rune", "Readiness", "Restore Mana", "Dire Drunkard", "Kill Command", "Hunter's Mark", "Bestial Wrath", "Blood Fury", "Lust for Battle", "Rapid Fire", "Haste"];
         let melee_list = ["Melee", "Raptor Strike"];
+        let white_list = ["Arcane Shot", "Auto Shot", "Steady Shot", "Scorpid Sting", "Serpent Sting", "Multi-Shot", "Raptor Strike", "Melee"];
 
         for (let i = 0; i < this.casts[fightId].events.length; i++) {
-            if (blacklist.includes(this.casts[fightId].events[i].ability.name)) {
+            if (!(white_list.includes(this.casts[fightId].events[i].ability.name))) {
+                //console.log("Remove this: " + this.casts[fightId].events[i].ability.name);
                 this.casts[fightId].events.splice(i, 1);
                 i--;
             }
