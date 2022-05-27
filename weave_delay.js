@@ -153,6 +153,7 @@ function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
     //calculate average
 
     let average = (y_data.reduce((a, b) => a + b, 0) / y_data.length) || 0;
+    average = average.toFixed(1);
 
     var svg = d3.select(svg_id),
         margin = 100,
