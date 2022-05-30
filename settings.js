@@ -33,6 +33,18 @@ function restoreDefaults() {
 }
 
 function loadSettings() {
+    if (localStorage.getItem("instants") == undefined) {
+        localStorage.setItem("instants", true);
+    }
+    if (localStorage.getItem("y12") == undefined) {
+        localStorage.setItem("y12", 2500);
+    }
+    if (localStorage.getItem("y3") == undefined) {
+        localStorage.setItem("y3", 4000);
+    }
+    if (localStorage.getItem("outliers") == undefined) {
+        localStorage.setItem("outliers", 5000);
+    }
     document.getElementById("instants").checked = localStorage.getItem("instants");
     document.getElementById("y12").value = localStorage.getItem("y12");
     document.getElementById("y3").value = localStorage.getItem("y3");
