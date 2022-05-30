@@ -1,10 +1,21 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
 <!DOCTYPE html>
 <html>
 
 <head>
+    <!--to analyze traffic, I think it does not affect performance at all?-->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YNZ372ED1D"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-YNZ372ED1D');
+    </script>
     <meta charset="UTF-8">
     <script src="weave_delay.js"></script>
     <script src="front.js"></script>
+    <script src="settings.js"></script>
     <script src="https://d3js.org/d3.v4.js"></script>
     <style>
         body {
@@ -47,6 +58,10 @@
         #input button {
             width: 450px;
             top: -10px;
+        }
+
+        #info input[type=number] {
+            width: 55px;
         }
 
         a:link {
@@ -104,24 +119,69 @@
         <button onclick=" showAndHideDisclaimer()">About</button>
         <button onclick="showAndHideChangelog()">Changelog</button>
         <button onclick="showAndHideTutorial()">Tutorial</button>
+        <button onclick="showAndHideSettings()">Settings</button>
+        <div id="settings" style="display:none">
+            <br>
+            <fieldset>
+                <fieldset>
+                    <legend>General settings</legend>
+                    <label for="instants">Enable instant casts (Arcane/Scorpid/Serpent)</label>
+                    <input type="checkbox" id="instants" checked="">
+                    <br>
+                    <label for="outliers">Remove outliers over</label>
+                    <input type="number" id="outliers" min="1000" max="10000" value="5000" step="500"></input>
+                </fieldset>
+                <br>
+                <fieldset>
+                    <legend>Graph Settings</legend>
+                    <div id="graphsettings">
+                        <fieldset>
+                            <legend>Graphs 1&2</legend>
+                            <label for="y12">y-limit</label>
+                            <input type="number" id="y12" min="500" max="5000" value="2500" step="100"></input>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Graph 3</legend>
+                            <label for="y3">y-limit</label>
+                            <input type="number" id="y3" min="1000" max="7000" value="4000" step="100"></input>
+                        </fieldset>
+                    </div>
+                </fieldset>
+                <legend>Settings</legend>
+                <br>
+                <button onclick="saveSettings()">Save</button>
+                <button onclick="restoreDefaults()">Restore Default</button>
+
+            </fieldset>
+        </div>
         <div id="disclaimer" style="display:block">
-            <p>This tool is able to calculate the delay between your weaves and your normal shots and abilities.</p>
+            <p>This tool is able to calculate the delay between your weaves and your normal shots and abilities.
+            </p>
             <p>The delay is calculated from the combat logs. Some inaccuracies can occur.</p>
-            <p>Any white melee hits or raptor strikes are considered a weave. <br> Abilities only include shots (like
-                Steady Shot, Arcane Shot, Auto Shot...) and excludes other "abilities" (like Hunter's Mark, Cooldowns,
+            <p>Any white melee hits or raptor strikes are considered a weave. <br> Abilities only include shots
+                (like
+                Steady Shot, Arcane Shot, Auto Shot...) and excludes other "abilities" (like Hunter's Mark,
+                Cooldowns,
                 Pots, ...). </p>
-            <p>For each boss there will be three graphs. Any white melee hits or raptor strikes are considered a weave.:
+            <p>For each boss there will be three graphs. Any white melee hits or raptor strikes are considered a
+                weave.:
             </p>
             <ul>
                 <li>ability to weave: shows the time between your last ability and your weave</li>
                 <li>weave to ability: shows the time between your weave and your next ability</li>
-                <li>total weave time: shows the total time between your last and your next abilty when you weaved</li>
+                <li>total weave time: shows the total time between your last and your next abilty when you
+                    weaved
+                </li>
             </ul>
-            <p>For any feedback or inconsistencies you notice (I am very new to JavaScript or HTML), do not hesitate to
-                send me a message on Discord (#henry3281). I am happy about any feedback. Just join the hunter <a
-                    href="https://discord.gg/classichunter">discord</a>, so I do not get flooded with friend requests.
+            <p>For any feedback or inconsistencies you notice (I am very new to JavaScript or HTML), do not
+                hesitate
+                to
+                send me a message on Discord (#henry3281). I am happy about any feedback. Just join the hunter
+                <a href="https://discord.gg/classichunter">discord</a>, so I do not get flooded with friend
+                requests.
             </p>
-            <p>Some parts of the code and parts of the desing are inspired/copied from this awesome tool made by voomlz.
+            <p>Some parts of the code and parts of the desing are inspired/copied from this awesome tool made by
+                voomlz.
                 Here it is, go
                 check it out if you do not know it yet:
                 <a href="https://voomlz.github.io/threat/">Voomlz threat tool</a>.
@@ -129,13 +189,20 @@
         </div>
         <div id="changelog" style="display:none">
             <h1>Any changes will go here in the future!</h1>
-            <p>May 27:
+            <p>May 30:</p>
+            <ul>
+                <li>Added a small settings page, if anything is unclear, give a heads up</li>
+                <li>Added this google tag to see stuff about the site, don't know if bad for performance or whatever?
+                </li>
+            </ul>
+            <p>May 27:</p>
             <ul>
                 <li>I think I fixed problems with entering the wrong player name. Please tell me if you still
                     encounter any weird "player not in this log" errors.</li>
                 <li>Added some additional information to"About". </li>
                 <li>Added average to the graphs.</li>
-                <li>Optimized valid cast selection, some more things are removed and make it more accurate (forgot
+                <li>Optimized valid cast selection, some more things are removed and make it more accurate
+                    (forgot
                     Sappers, etc.). Now whitelists instead (better practice anyway).</li>
             </ul>
         </div>

@@ -100,10 +100,15 @@ class Report {
     doMath(fightId, start_time, name) {
         //this removes any ability in blacklist from the cast list, also removes any windfury proccs
         let melee_list = ["Melee", "Raptor Strike"];
-        let white_list = ["Arcane Shot", "Auto Shot", "Steady Shot", "Scorpid Sting", "Serpent Sting", "Multi-Shot", "Raptor Strike", "Melee"];
+        console.log("Instants ja nein?: " + localStorage.getItem("instants"));
+        if (localStorage.getItem("instants") == "true") {
+            var whitelist = ["Arcane Shot", "Auto Shot", "Steady Shot", "Scorpid Sting", "Serpent Sting", "Multi-Shot", "Raptor Strike", "Melee"];
+        } else {
+            var whitelist = ["Auto Shot", "Steady Shot", "Multi-Shot", "Raptor Strike", "Melee"];
+        }
 
         for (let i = 0; i < this.casts[fightId].events.length; i++) {
-            if (!(white_list.includes(this.casts[fightId].events[i].ability.name))) {
+            if (!(whitelist.includes(this.casts[fightId].events[i].ability.name))) {
                 //console.log("Remove this: " + this.casts[fightId].events[i].ability.name);
                 this.casts[fightId].events.splice(i, 1);
                 i--;
@@ -135,13 +140,32 @@ class Report {
             total_weave_time.push(ability_weave_time[i] + weave_ability_time[i]);
         }
 
+
+        //remove outliers
+        let outliers = document.getElementById("outliers").value;
+        console.log(outliers);
+        console.log(total_weave_time);
+        console.log(typeof (outliers));
+        for (let i = 0; i < ability_weave_time.length; i++) {
+            if (total_weave_time[i] > outliers) {
+                console.log("Zeit: " + total_weave_time[i]);
+                ability_weave_time.splice(i, 1);
+                weave_ability_time.splice(i, 1);
+                total_weave_time.splice(i, 1);
+                timestamps_weave.splice(i, 1);
+                i--;
+            }
+        }
+
         //draws the plots
+        let y12 = localStorage.getItem("y12");
+        let y3 = localStorage.getItem("y3");
         show("plot");
         d3.selectAll("svg > *").remove();
         let x_limit = (this.casts[fightId].events[this.casts[fightId].events.length - 1].timestamp - start_time) / 1000 + 10;
-        drawPlot(timestamps_weave, ability_weave_time, x_limit, 2500, "#svg1", "Ability to weave time on " + name);
-        drawPlot(timestamps_weave, weave_ability_time, x_limit, 2500, "#svg2", "Weave to ability time on " + name);
-        drawPlot(timestamps_weave, total_weave_time, x_limit, 4000, "#svg3", "Total weave time on " + name);
+        drawPlot(timestamps_weave, ability_weave_time, x_limit, y12, "#svg1", "Ability to weave time on " + name);
+        drawPlot(timestamps_weave, weave_ability_time, x_limit, y12, "#svg2", "Weave to ability time on " + name);
+        drawPlot(timestamps_weave, total_weave_time, x_limit, y3, "#svg3", "Total weave time on " + name);
     }
 
 
@@ -154,6 +178,9 @@ function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
     //calculate average
 
     let average = (y_data.reduce((a, b) => a + b, 0) / y_data.length) || 0;
+
+
+
     average = average.toFixed(1);
     console.log(average);
 

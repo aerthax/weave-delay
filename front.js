@@ -26,21 +26,32 @@ function showAndHideDisclaimer() {
     showAndHide("disclaimer");
     hide("changelog");
     hide("tutorial");
+    hide("settings");
 }
 
 function showAndHideChangelog() {
     showAndHide("changelog");
     hide("disclaimer");
     hide("tutorial");
+    hide("settings");
 }
 function showAndHideTutorial() {
     showAndHide("tutorial");
     hide("changelog");
     hide("disclaimer");
+    hide("settings");
+}
+
+function showAndHideSettings() {
+    showAndHide("settings");
+    hide("changelog");
+    hide("disclaimer");
+    hide("tutorial");
 }
 
 function loadPage() {
     scroll(0, 0);
+    loadSettings();
     const idParam = getParameterByName('id');
     //const fightParam = getParameterByName('fight');
     const playerParam = getParameterByName('player');
