@@ -160,12 +160,35 @@ class Report {
         //draws the plots
         let y12 = localStorage.getItem("y12");
         let y3 = localStorage.getItem("y3");
+
+        //calc averages
+        let average1 = (ability_weave_time.reduce((a, b) => a + b, 0) / ability_weave_time.length) || 0;
+        let average2 = (weave_ability_time.reduce((a, b) => a + b, 0) / ability_weave_time.length) || 0;
+        let average3 = (total_weave_time.reduce((a, b) => a + b, 0) / ability_weave_time.length) || 0;
+
+        //prepare data for d3
+        let zip1 = d3.zip(timestamps_weave, ability_weave_time);
+        let zip2 = d3.zip(timestamps_weave, weave_ability_time);
+        let zip3 = d3.zip(timestamps_weave, total_weave_time);
+
+        //hide over limit y12
+        for (let i = 0; i < zip1.length; i++) {
+            if (zip1[i][1] > y12 || zip2[i][1] > y12 || zip3[i][1] > y3) {
+                zip1.splice(i, 1);
+                zip2.splice(i, 1);
+                zip3.splice(i, 1);
+                i--;
+            }
+        }
+
         show("plot");
         d3.selectAll("svg > *").remove();
         let x_limit = (this.casts[fightId].events[this.casts[fightId].events.length - 1].timestamp - start_time) / 1000 + 10;
-        drawPlot(timestamps_weave, ability_weave_time, x_limit, y12, "#svg1", "Ability to weave time on " + name);
-        drawPlot(timestamps_weave, weave_ability_time, x_limit, y12, "#svg2", "Weave to ability time on " + name);
-        drawPlot(timestamps_weave, total_weave_time, x_limit, y3, "#svg3", "Total weave time on " + name);
+        drawPlot(zip1, average1, x_limit, y12, "#svg1", "Ability to weave time on " + name);
+        drawPlot(zip2, average2, x_limit, y12, "#svg2", "Weave to ability time on " + name);
+        drawPlot(zip3, average3, x_limit, y3, "#svg3", "Total weave time on " + name);
+
+
     }
 
 
@@ -173,11 +196,12 @@ class Report {
 }
 
 //draws the graphs
-function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
+function drawPlot(zip, average, x_limit, y_limit, svg_id, title) {
 
     //calculate average
+    console.log(zip);
 
-    let average = (y_data.reduce((a, b) => a + b, 0) / y_data.length) || 0;
+
 
 
 
@@ -239,7 +263,7 @@ function drawPlot(x_data, y_data, x_limit, y_limit, svg_id, title) {
     //values
     svg.append('g')
         .selectAll("dot")
-        .data(d3.zip(x_data, y_data))
+        .data(zip)
         .enter()
         .append("circle")
         .attr("cx", function (d) { return xScale(d[0]); })
