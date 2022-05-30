@@ -98,24 +98,26 @@ class Report {
     }
 
     doMath(fightId, start_time, name) {
+        let mutable_casts = this.casts[fightId].events.slice();
         //this removes any ability in blacklist from the cast list, also removes any windfury proccs
         let melee_list = ["Melee", "Raptor Strike"];
-        console.log("Instants ja nein?: " + localStorage.getItem("instants"));
         if (localStorage.getItem("instants") == "true") {
             var whitelist = ["Arcane Shot", "Auto Shot", "Steady Shot", "Scorpid Sting", "Serpent Sting", "Multi-Shot", "Raptor Strike", "Melee"];
         } else {
             var whitelist = ["Auto Shot", "Steady Shot", "Multi-Shot", "Raptor Strike", "Melee"];
         }
 
-        for (let i = 0; i < this.casts[fightId].events.length; i++) {
-            if (!(whitelist.includes(this.casts[fightId].events[i].ability.name))) {
-                //console.log("Remove this: " + this.casts[fightId].events[i].ability.name);
-                this.casts[fightId].events.splice(i, 1);
+        console.log("the whitelist is: " + whitelist);
+
+        for (let i = 0; i < mutable_casts.length; i++) {
+            if (!(whitelist.includes(mutable_casts[i].ability.name))) {
+                //console.log("Remove this: " + mutable_casts[i].ability.name);
+                mutable_casts.splice(i, 1);
                 i--;
             }
-            else if (this.casts[fightId].events[i].ability.name == "Melee") {
-                if (melee_list.includes(this.casts[fightId].events[i - 1].ability.name)) {
-                    this.casts[fightId].events.splice(i - 1, 1);
+            else if (mutable_casts[i].ability.name == "Melee") {
+                if (melee_list.includes(mutable_casts[i - 1].ability.name)) {
+                    mutable_casts.splice(i - 1, 1);
                     i--;
                 }
             }
@@ -126,12 +128,12 @@ class Report {
         let weave_ability_time = [];
 
         //calculates the difference in time between weaves and abilities
-        for (let i = 0; i < this.casts[fightId].events.length; i++) {
-            let cast = this.casts[fightId].events[i];
-            if ((cast.ability.name == "Melee" || cast.ability.name == "Raptor Strike") && i >= 1 && i < this.casts[fightId].events.length - 1) {
+        for (let i = 0; i < mutable_casts.length; i++) {
+            let cast = mutable_casts[i];
+            if ((cast.ability.name == "Melee" || cast.ability.name == "Raptor Strike") && i >= 1 && i < mutable_casts.length - 1) {
                 timestamps_weave.push((cast.timestamp - start_time) / 1000);
-                ability_weave_time.push(cast.timestamp - this.casts[fightId].events[i - 1].timestamp);
-                weave_ability_time.push(this.casts[fightId].events[i + 1].timestamp - cast.timestamp);
+                ability_weave_time.push(cast.timestamp - mutable_casts[i - 1].timestamp);
+                weave_ability_time.push(mutable_casts[i + 1].timestamp - cast.timestamp);
             }
         }
 
@@ -143,9 +145,6 @@ class Report {
 
         //remove outliers
         let outliers = document.getElementById("outliers").value;
-        console.log(outliers);
-        console.log(total_weave_time);
-        console.log(typeof (outliers));
         for (let i = 0; i < ability_weave_time.length; i++) {
             if (total_weave_time[i] > outliers) {
                 console.log("Zeit: " + total_weave_time[i]);
@@ -183,7 +182,7 @@ class Report {
 
         show("plot");
         d3.selectAll("svg > *").remove();
-        let x_limit = (this.casts[fightId].events[this.casts[fightId].events.length - 1].timestamp - start_time) / 1000 + 10;
+        let x_limit = (mutable_casts[mutable_casts.length - 1].timestamp - start_time) / 1000 + 10;
         drawPlot(zip1, average1, x_limit, y12, "#svg1", "Ability to weave time on " + name);
         drawPlot(zip2, average2, x_limit, y12, "#svg2", "Weave to ability time on " + name);
         drawPlot(zip3, average3, x_limit, y3, "#svg3", "Total weave time on " + name);
@@ -199,14 +198,9 @@ class Report {
 function drawPlot(zip, average, x_limit, y_limit, svg_id, title) {
 
     //calculate average
-    console.log(zip);
-
-
-
-
 
     average = average.toFixed(1);
-    console.log(average);
+    //console.log(average);
 
     var svg = d3.select(svg_id),
         margin = 100,

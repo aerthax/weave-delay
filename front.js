@@ -19,7 +19,6 @@ function show(div) {
     for (let i of x) {
         i.style.display = "inline-block";
     }
-    console.log(x);
 }
 
 function showAndHideDisclaimer() {
