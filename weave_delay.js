@@ -34,7 +34,7 @@ async function fetchWCLv1(path) {
     nextRequestTime += throttleTime;
     await sleep(d);
     console.assert(path.length < 1900, "URL may be too long: " + path);
-    let response = await fetch(`https://www.warcraftlogs.com:443/v1/${path}api_key=${apikey}`);
+    let response = await fetch(`https://www.warcraftlogs.com:443/v1/${path}translate=true&api_key=${apikey}`);
     if (!response) {
         throw "Could not fetch " + path;
     }
@@ -68,6 +68,7 @@ class Report {
         for (let friendlies of this.data.friendlies) {
             this.friendlies[friendlies.name] = friendlies.id;
         }
+        console.log(this.friendlies);
         this.fetchCasts();
     }
 
@@ -99,6 +100,7 @@ class Report {
 
     doMath(fightId, start_time, name) {
         let mutable_casts = this.casts[fightId].events.slice();
+        console.log(this.casts);
         //this removes any ability in blacklist from the cast list, also removes any windfury proccs
         let melee_list = ["Melee", "Raptor Strike"];
         if (localStorage.getItem("instants") == "true") {
