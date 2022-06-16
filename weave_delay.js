@@ -100,7 +100,7 @@ class Report {
 
     doMath(fightId, start_time, name) {
         let mutable_casts = this.casts[fightId].events.slice();
-        console.log(this.casts);
+        //console.log(this.casts);
         //this removes any ability in blacklist from the cast list, also removes any windfury proccs
         let melee_list = ["Melee", "Raptor Strike"];
         if (localStorage.getItem("instants") == "true") {
@@ -110,14 +110,13 @@ class Report {
         }
 
         console.log("the whitelist is: " + whitelist);
-
         for (let i = 0; i < mutable_casts.length; i++) {
             if (!(whitelist.includes(mutable_casts[i].ability.name))) {
                 //console.log("Remove this: " + mutable_casts[i].ability.name);
                 mutable_casts.splice(i, 1);
                 i--;
             }
-            else if (mutable_casts[i].ability.name == "Melee") {
+            else if (mutable_casts[i].ability.name == "Melee" && i != 0) {
                 if (melee_list.includes(mutable_casts[i - 1].ability.name)) {
                     mutable_casts.splice(i - 1, 1);
                     i--;
